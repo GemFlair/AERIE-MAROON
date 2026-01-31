@@ -1,5 +1,12 @@
-
 import { GoogleGenAI } from "@google/genai";
+
+// Fix for 'Cannot find name process' in TypeScript during build
+declare const process: {
+  env: {
+    API_KEY: string;
+    [key: string]: string | undefined;
+  };
+};
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
@@ -14,7 +21,7 @@ export const getAerieInsights = async (prompt: string, history: ChatHistory[]) =
       model: "gemini-3-flash-preview",
       contents: [
         ...history.map(h => ({
-          role: h.role === 'user' ? 'user' : 'model',
+          role: h.role === 'user' ? 'user' : 'model' as const,
           parts: [{ text: h.content }]
         })),
         { role: 'user', parts: [{ text: prompt }] }
